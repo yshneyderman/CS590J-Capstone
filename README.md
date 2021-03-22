@@ -1,27 +1,33 @@
-# CurveBall (CVE-2020-0601) - ECC/Po2 EXPLOIT
+# CS590J Capstone - CurveBall (CVE-2020-0601) Exploit
 
-CVE-2020-0601, or commonly referred to as CurveBall, is a vulnerability in which the signature of certificates using elliptic curve cryptography (ECC) is not correctly verified. 
 
-ECC relies on different parameters. Standardized parameters are used for many curves. However, Microsoft didn't check all these parameters like the geniuses they are... The parameter `G` (the generator) was NOT checked, and an attacker can therefore supply a hand-rolled generator, as such, when Microsoft tries to validate the certificate against a trusted CA, it'll only look for matching public keys, and then booooom, it will use the generator of the certificate. 
 
-NSA clearly explains the devestating impact of this vulnerability and more [here](https://media.defense.gov/2020/Jan/14/2002234275/-1/-1/0/CSA-WINDOWS-10-CRYPT-LIB-20190114.PDF). Strap one on and get to it!
+##How to Setup
+Generate SSH Keys
+	sudo apt-get install git
+	git config --global user.email "yealsh21@gmail.com"
+	git config --global user.name "Yefim"
+	ssh-keygen -t ed25519 -C "yealsh21@gmail.com"
+	eval "$(ssh-agent -s)"
+ 	ssh-add ~/.ssh/id_ed25519
+	sudo apt-get install xclip
+	xclip -selection clipboard < ~/.ssh/id_ed25519.pub
 
-`MicrosoftECCProductRootCertificateAuthority.cer` is by default a trusted root certificate authority (CA) using ECC on Windows 10. Anything signed with this certificate will therefore automatically be trusted.  
+Add SSH Keys
+	Login to GitHub, click profile, click settings and add SSH Key. Paste Key, give any title.
 
-Let it be said, :The are always watching... so      *Please use this for educational and researching purposes only.*
+Clone the Repository
+	git clone git@github.com:yshneyderman/CS590J-Capstone.git
 
-**Minimum requirements**
-`openssl 1.1.0`
-`ruby 2.4.0`
+Install Ruby:
+	sudo apt update
+	sudo apt install ruby
 
-## Mathematical details
-If you're interested in the mathematical details of the vulnerability, please read more [here](https://news.ycombinator.com/item?id=22048619).
+Adding changes (to a branch)
+	git commit -a -m "What I changed"
+	git push
 
-In order to spoof the certificate, set the following parameters:
 
-    d' = 1
-    G' = Q
-Such that `Q = Q' = d'G'`.
 
 ## Usage
 Create a certificate with the same public key and parameters of a trusted CA. This will be used as our spoofing CA. Set the generator to a value, where you know the private key. You can easily set the generator to the public key, and have a private key set to `1`, since `Q = dG`.
@@ -84,4 +90,3 @@ You can now use `cert.crt`, `cert.key`, and `spoofed_ca.crt` to serve your conte
 
 See the usage example in [https://github.com/IIICTECH/-CVE-2020-0601---ECC-/blob/master/tls/index.js).
 
-*Please use this for educational and researching purposes only.*
