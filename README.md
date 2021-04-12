@@ -1,31 +1,40 @@
-# CS590J Capstone - CurveBall (CVE-2020-0601) Exploit
+# CS590J Capstone 
 
+The general idea: Victim is a school education system that has all the grades and tons of student/teacher information. There is a vulnerability in the system (CVE-2021-3239): "E-Learning System 1.0" (an actual piece of software) is vulnerable to SQL injection and we are able to authenticate by SQL injecting an "or TRUE" and then gain a reverse shell.
+
+To test this out, follow the setup instructions here: https://www.sourcecodester.com/php/12808/e-learning-system-using-phpmysqli.html.
+-First install windows 10 old version: https://drive.google.com/file/d/1OUPmqJ7JiYdY5jt7T7G9oDnN01usJs7v/view?usp=sharing
+-Install xamp version 7.2.33 onto this windows VM(this version is important)
+-Follow the instructions in the first link to setup E-Learning System 1.0
+-Execute the python script to gain a reverse shell
 
 
 ##How to Setup
 Generate SSH Keys
-	sudo apt-get install git
-	git config --global user.email "yealsh21@gmail.com"
-	git config --global user.name "Yefim"
-	ssh-keygen -t ed25519 -C "yealsh21@gmail.com"
-	eval "$(ssh-agent -s)"
- 	ssh-add ~/.ssh/id_ed25519
-	sudo apt-get install xclip
-	xclip -selection clipboard < ~/.ssh/id_ed25519.pub
+-sudo apt-get install git
+-git config --global user.email "yealsh21@gmail.com"
+-git config --global user.name "Yefim"
+-ssh-keygen -t ed25519 -C "yealsh21@gmail.com"
+-eval "$(ssh-agent -s)"
+-ssh-add ~/.ssh/id_ed25519
+-sudo apt-get install xclip
+-xclip -selection clipboard < ~/.ssh/id_ed25519.pub
 
 Add SSH Keys
-	Login to GitHub, click profile, click settings and add SSH Key. Paste Key, give any title.
+-Login to GitHub, click profile, click settings and add SSH Key. Paste Key, give any title.
 
 Clone the Repository
-	git clone git@github.com:yshneyderman/CS590J-Capstone.git
+-git clone git@github.com:yshneyderman/CS590J-Capstone.git
 
 Install Ruby:
-	sudo apt update
-	sudo apt install ruby
+-sudo apt update
+-sudo apt install ruby
 
 Adding changes (to a branch)
-	git commit -a -m "What I changed"
-	git push
+-git commit -a -m "What I changed"
+-git push
+
+#CurveBall (CVE-2020-0601) Exploit
 
 
 
