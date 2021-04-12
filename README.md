@@ -6,8 +6,12 @@ The general idea: Victim is a school education system that has all the grades an
 To test this out, follow the setup instructions here: https://www.sourcecodester.com/php/12808/e-learning-system-using-phpmysqli.html.
 - First install windows 10 old version: https://drive.google.com/file/d/1OUPmqJ7JiYdY5jt7T7G9oDnN01usJs7v/view?usp=sharing
 - Install xamp version 7.2.33 onto this windows VM(this version is important) https://www.apachefriends.org/download.html
+- Install netcat through nmap https://nmap.org/
 - Follow the instructions in the first link to setup E-Learning System 1.0
-- Execute the python script to gain a reverse shell
+- Execute the python script (exploit.py) to gain a reverse shell where you have another window running:
+```
+ncat -l 9999
+```
 
 
 ##How to Setup GitHub
