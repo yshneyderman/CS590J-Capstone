@@ -1,17 +1,19 @@
 # CS590J Capstone 
 
-The general idea: Victim is a school education system that has all the grades and tons of student/teacher information. There is a vulnerability in the system (CVE-2021-3239): "E-Learning System 1.0" (an actual piece of software) is vulnerable to SQL injection and we are able to authenticate by SQL injecting an "or TRUE" and then gain a reverse shell.
+The general idea: Victim is a school education system that has all the grades and tons of student/teacher information. We are a student that wants to have malicious access to this system to modify school files, spy on peers, and whatever teacher files are on the computer (data modification and exfil). There is a vulnerability in the system (CVE-2021-3239): "E-Learning System 1.0" (an actual piece of software) is vulnerable to SQL injection and we are able to authenticate by SQL injecting an "or TRUE" into the unsanitized login screen and then gain a reverse shell.
 
 #How to setup the victim and environment
-To test this out, follow the setup instructions here: https://www.sourcecodester.com/php/12808/e-learning-system-using-phpmysqli.html.
-- First install windows 10 old version: https://drive.google.com/file/d/1OUPmqJ7JiYdY5jt7T7G9oDnN01usJs7v/view?usp=sharing
-- Install xamp version 7.2.33 onto this windows VM(this version is important) https://www.apachefriends.org/download.html
+To test this out, generally follow the setup instructions here: https://www.sourcecodester.com/php/12808/e-learning-system-using-phpmysqli.html.
+- First setup a virtual machine in virtualbox of windows 10 old version: https://drive.google.com/file/d/1OUPmqJ7JiYdY5jt7T7G9oDnN01usJs7v/view?usp=sharing. I gave it 32 GB storage and 5 GB RAM, but more is better of course. All future instructions are from this VM.
+- Install XAMP version 7.2.33 onto this windows VM(this version is important) https://www.apachefriends.org/download.html. You will have to click more and then find version 7.2.33. Download the most frequently downloaded copy of this version.
 - Install netcat through nmap https://nmap.org/
-- Follow the instructions in the first link to setup E-Learning System 1.0
-- Execute the python script (exploit.py) to gain a reverse shell where you have another window running:
+- Follow the instructions in the first link to setup E-Learning System 1.0. This includes extracting the CAIWL program, running apache and mySQL, setting up a database.
+- Execute the python script (exploit.py) from anywhere (on the VM unless you specify the ports from another machine - we need to modify the code if we want it to open a port onto another VM) to gain a reverse shell where you have another window running:
 ```
 ncat -l 9999
 ```
+- All in all it looks like so:
+![Image of the Code](https://github.com/yshneyderman/CS590J-Capstone/blob/main/example.png)
 
 
 ##How to Setup GitHub
