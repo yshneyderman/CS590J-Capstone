@@ -1,6 +1,6 @@
 # CS590J Capstone 
 
-The general idea: Victim is a school education system that has all the grades and tons of student/teacher information. We are a student that wants to have malicious access to this system to modify school files, spy on peers, and whatever teacher files are on the computer (data modification and exfil). There is a vulnerability in the system (CVE-2021-3239): "E-Learning System 1.0" (an actual piece of software) is vulnerable to SQL injection and we are able to authenticate by SQL injecting an "or TRUE" into the unsanitized login screen and then gain a reverse shell.
+The general idea: Victim is a school education system that has all the grades and tons of student/teacher information. We are a student that wants to have malicious access to this system to modify school files, spy on peers, and whatever teacher files are on the computer (data modification and exfil). There is a vulnerability in the system (CVE-2021-3239): "E-Learning System 1.0" (an actual piece of software submitted to an open source website which was used by a public school in the Philippines) is vulnerable to SQL injection and we are able to authenticate by SQL injecting an "or TRUE" into the unsanitized login screen and then gain a reverse shell.
 
 #How to setup the victim and environment
 To test this out, generally follow the setup instructions here: https://www.sourcecodester.com/php/12808/e-learning-system-using-phpmysqli.html.
