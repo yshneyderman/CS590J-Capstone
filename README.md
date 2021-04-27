@@ -4,17 +4,27 @@ The general idea: Victim is a school education system that has all the grades an
 
 #How to setup the victim and environment
 To test this out, generally follow the setup instructions here: https://www.sourcecodester.com/php/12808/e-learning-system-using-phpmysqli.html.
-- First setup a virtual machine in virtualbox of windows 10 old version: https://drive.google.com/file/d/1OUPmqJ7JiYdY5jt7T7G9oDnN01usJs7v/view?usp=sharing. I gave it 32 GB storage and 5 GB RAM, but more is better of course. All future instructions are from this VM.
+- First setup a virtual machine in virtualbox of windows 10 old version: https://drive.google.com/file/d/1OUPmqJ7JiYdY5jt7T7G9oDnN01usJs7v/view?usp=sharing. I gave it 32 GB storage and 7 GB RAM, but more is better of course. All future instructions are from this VM.
 - Install XAMP version 7.2.33 onto this windows VM(this version is important) https://www.apachefriends.org/download.html. You will have to click more and then find version 7.2.33. Download the most frequently downloaded copy of this version.
 - Install netcat through nmap https://nmap.org/
 - Install the most recent version of Python and pip install requests and colorama (it's a lot easier to see colored text stand out)
 - Follow the instructions in the first link to setup E-Learning System 1.0. This includes extracting the CAIWL program, running apache and mySQL, setting up a database.
-- Execute the python script (exploit.py) from anywhere (on the VM unless you specify the ports from another machine - we need to modify the code if we want it to open a port onto another VM) to gain a reverse shell where you have another window running:
+- Execute the python script (exploit.py) from anywhere (on the VM unless you specify the ports from another machine - we need to modify the code if we want it to open a port onto another VM). 
+```
+python exploit.py
+``` 
+- From here there are two options: either install and run the implant (enter 'i' when it prompts you to) and connect to the c2 server in another window by doing
+```
+python c2.py
+``` 
+- ...or just gain a reverse shell without installing the implant where you have another window running:
 ```
 ncat -l 9999
 ```
-- All in all it looks like so:
-![Image of the Code](https://github.com/yshneyderman/CS590J-Capstone/blob/main/example.png)
+- All in all the reverse shell looks like so:
+![Image of the Reverse Shell](https://github.com/yshneyderman/CS590J-Capstone/blob/main/example.png)
+- And the C2 looks like so
+![Image of the C2](https://github.com/yshneyderman/CS590J-Capstone/blob/main/example2.png)
 
 
 ##How to Setup GitHub
