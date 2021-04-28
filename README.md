@@ -23,11 +23,11 @@ ncat -l 9999
 ```
 - All in all the reverse shell looks like so:
 ![Image of the Reverse Shell](https://github.com/yshneyderman/CS590J-Capstone/blob/main/example.png)
-- And the C2 looks like so
+- And the C2 looks like so:
 ![Image of the C2](https://github.com/yshneyderman/CS590J-Capstone/blob/main/example2.png)
 
 
-##How to Setup GitHub
+## How to Setup GitHub
 Generate SSH Keys
 - sudo apt-get install git
 - git config --global user.email "yealsh21@gmail.com"

