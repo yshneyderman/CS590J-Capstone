@@ -84,5 +84,5 @@ while(True):
 
     if(comm == "1"):
         remove(argv[0])
-        exit()
+        sys.exit(0)
         
