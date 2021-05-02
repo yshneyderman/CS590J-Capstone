@@ -74,7 +74,7 @@ while(True):
             #Answer is seven or 7
             print("Answer this puzzle to self-destruct: I am an odd number, but take away one letter and I am 'even'")
             c2 = input(">>").lower()
-            if(c2 == '7' or c == 'seven'):
+            if(c2 == '7' or c2 == 'seven'):
                 print(f"{Fore.RED}Self-destruct initiated")
                 #Send signal to self destruct
                 send_implant('1')

