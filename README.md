@@ -1,25 +1,34 @@
 # CS590J Capstone 
 
-The general idea: Victim is a school education system that has all the grades and tons of student/teacher information. Let's assume this is all stored on the same machine and we can put all these files on the desktop. We are a student that wants to have malicious access to this system to modify school files (change our grades, attendance), spy on peer's information, and whatever teacher files are on the computer (data modification and exfil). There is a vulnerability in the system (CVE-2021-3239): "E-Learning System 1.0" (an actual piece of software submitted to an open source website which was used by a public school in the Philippines) is vulnerable to SQL injection and we are able to authenticate by SQL injecting an "or TRUE" into the unsanitized login screen and then gain a reverse shell or install an implant. From here the implant runs and we connect to it via a C2 software that we wrote so that we can choose which data and when to extract it or when to abort.
+The general idea: Victim is a school education system that has all the grades and tons of student/teacher information. Let's assume this is all stored on the same machine and we can put all these files on the desktop. We are a student that wants to have malicious access to this system to access school files (grades, attendance), spy on peer's information, and whatever teacher files are on the computer (data modification and exfil). There is a vulnerability in the system (CVE-2021-3239): "E-Learning System 1.0" (an actual piece of software submitted to an open source website which was used by a public school in the Philippines) is vulnerable to SQL injection and we are able to authenticate by SQL injecting an "or TRUE" into the unsanitized login screen and then gain a reverse shell or install an implant. From here the implant runs and we connect to it via a C2 software that we wrote so that we can choose which data and when to extract it or when to abort.
+
+# Setting up
 
 ## How to setup the victim and environment
 To test this out, generally follow the setup instructions here: https://www.sourcecodester.com/php/12808/e-learning-system-using-phpmysqli.html.
 - First setup a virtual machine in virtualbox of windows 10 old version: https://drive.google.com/file/d/1OUPmqJ7JiYdY5jt7T7G9oDnN01usJs7v/view?usp=sharing. I gave it 32 GB storage and 7 GB RAM, but more is better of course. All future instructions are from this VM.
 - Install XAMP version 7.2.33 onto this windows VM(this version is important) https://www.apachefriends.org/download.html. You will have to click more and then find version 7.2.33. Download the most frequently downloaded copy of this version.
+
+## How to setup the attacker environment
 - Install netcat through nmap https://nmap.org/
 - Install the most recent version of Python and pip install rsa, requests, and colorama (it's a lot easier to see colored text stand out)
 - Follow the instructions in the first link to setup E-Learning System 1.0. This includes extracting the CAIWL program, running apache and mySQL, setting up a database.
 
+## Virtual Machines
+- Virtual Machines for the attacker (windows 10), and defender (kali linux) are provided [here](https://mega.nz/folder/Y54QxLLZ#uj_E9ViPxc4_p6T_Qzf79g).
+- They have already been configured with all of the necessary applications installed and configured as specified by the previous two sections. 
+- The attacker machine also has versions of the exploit and c2 files installed, however they may be out of date, in which case it will be necessary to re-clone the repository.
+
 ## How to Run
-- Execute the exploit python script (exploit.py) from anywhere (on the VM unless you specify the ports from another machine - we need to modify the code if we want it to open a port onto another VM). 
+- Execute the exploit [python script](exploit.py) from the directory containing it. It accecpts a single command line argument `target ip`. If no IP is specified, the program will assume the target is `localhost` as a default.
 ```
-python exploit.py
+python3 exploit.py [target ip]
 ``` 
-- From here there are two options: either install and run the implant (enter 'i' or 'c' depending on the filetype you want when it prompts you to) and connect to the c2 server in another window by doing
+- From here there are two options: either install and run the implant (enter 'i' or 'c' depending on the filetype you want when it prompts you to) and connect to the [c2 server](c2.py) in another window. Just as the [exploit](exploit.py), the c2 has a single optional parameter `target ip` which defaults to `localhost` if nothing is specified.
 ```
-python c2.py
+python3 c2.py [target ip]
 ``` 
-- ...or just gain a reverse shell without installing the implant where you have another window running:
+- You also have the option to just gain a reverse shell without installing the implant. The implant will attempt to connect to port 9999, therefore you can simply listen on that port with netcat by running:
 ```
 ncat -l 9999
 ```
@@ -94,5 +103,5 @@ Sign your executable with PKCS12 file.
 
     osslsigncode sign -pkcs12 cert.p12 -n "Signed by ollypwn" -in 7z1900-x64.exe -out 7z1900-x64_signed.exe
 
-See the usage example in [https://github.com/IIICTECH/-CVE-2020-0601---ECC-/blob/master/tls/index.js).
+See the usage [example](https://github.com/IIICTECH/-CVE-2020-0601---ECC-/blob/master/tls/index.js).
 
